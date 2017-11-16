@@ -6,137 +6,19 @@ using System.Text.RegularExpressions;
 namespace Lotto
 {
 
-    class Lotto6out49
+    class Program
     {
-        static void CheckIfHighScore(Player player, List<Player> playerList)
-        {
-            
-            foreach (Player spieler in playerList)
-            {
-                if (player.Name == spieler.Name && player.Score > spieler.Score)
-                {
-                    spieler.Score = player.Score;
-                }
-            }
-            
-            
-        }
-
-        static void GetHighscore(List<Player> playerList)
-        {
-            int counter = 1;
-
-            playerList.Sort(delegate (Player a, Player b) { return a.Score.CompareTo(b.Score); });
-            playerList.Reverse();
-
-            foreach (Player spieler in playerList)
-            {
-
-                Console.WriteLine(counter + ". " + spieler.Name + " Score: " + spieler.Score + " Playdate: " + spieler.PlayDate);
-                counter++;
-            }
-
-            Console.WriteLine();
-        }
-
-        static int CheckRightNumber(int[] numberArray, int[] generated)
-        {
-            int result = 0;
-            
-            foreach (int value in numberArray)
-            {
-                if (IsInArray(value, generated))
-                {
-                    Console.Write(value + " ");
-                    result++;
-                }
-            }
-
-            Console.WriteLine();
-
-            return result;       
-
-        }
-
-
-        static bool IsInArray(int number, int[] numberArray)
-        {
-            bool result = false;
-
-            foreach (int value in numberArray)
-            {
-                if (number == value)
-                {
-                    result = true;
-                }
-            }
-
-            return result;
-
-        }
-
-        static void DisplayArray(int[] arr)
-        {
-            foreach (int number in arr)
-            {
-                Console.Write(number + " ");
-            }
-            Console.WriteLine();
-        }
-
-        static int[] GenerateNumbers()
-        {
-            Random rand = new Random();
-            int i = 0;
-            int temp;
-
-            int[] result = new int[6];
-
-            while (i < 6)
-            {
-                temp = rand.Next(1, 50);
-                if (!IsInArray(temp, result))
-                {
-                    result[i] = temp;
-                    i++;
-                }
-            }
-
-            return result;
-        }
-
-        static bool CheckForDuplicates(int[] numberArray)
-        {
-            bool result = false;
-
-            for (int i = 0; i < numberArray.Length - 1; i++)
-            {
-                for (int j = i + 1; j < numberArray.Length; j++)
-                {
-                    if (numberArray[i] == numberArray[j])
-                    {
-                        result = true;
-                        break;
-                    }
-                }
-            }
-
-            return result;
-        }
-
-
+               
         static void Main()
         {
-
-
             bool loop = true;
             int temp;
             string feed;
             string input;
             string[] myNumbers = new string[] { };
             int[] numberArray = new int[] { };
-            string player;
-            List<Player> playerList = new List<Player>();
+            string player = "";
+            Playerlist playerList = new Playerlist();
             
 
             while (loop)
@@ -147,8 +29,13 @@ namespace Lotto
                     Console.WriteLine("Please enter your name.");
                     player = Console.ReadLine();
 
+                    while (player.Trim() == "")
+                    {
+                        Console.WriteLine("Please enter your name.");
+                        player = Console.ReadLine();
+                    }
 
-                    while (playerList.Exists(element => element.Name == player))
+                    while (Playerlist.Existence(player, playerList))
                     {
                         Console.WriteLine("Playername existing. Choose another one or press w to continue as {0}.", player);
                         input = Console.ReadLine();
@@ -159,12 +46,10 @@ namespace Lotto
                     }
 
                     Player newPlayer = new Player(player, DateTime.Now);
-                    //playerList.Add(newPlayer);
-
-                    
-                    if (!playerList.Exists(element => element.Name == player))
+                                        
+                    if (!Playerlist.Existence(newPlayer, playerList))
                     {
-                        playerList.Add(newPlayer);
+                        Playerlist.AddPlayer(newPlayer, playerList);
                     }
                     
                     Console.WriteLine("{0} please enter 6 distinct numbers between 1 and 49.", player);
@@ -181,7 +66,7 @@ namespace Lotto
                         break;
                     }
 
-                    if (CheckForDuplicates(numberArray))
+                    if (Lotto6out49.CheckForDuplicates(numberArray))
                     {
                         Console.WriteLine("You entered a duplicate number.");
                         break;
@@ -200,31 +85,24 @@ namespace Lotto
                     }
 
 
-                    int[] generated = GenerateNumbers();
-
-
-
-                    Console.WriteLine();
-                    //DisplayArray(numberArray);
-                    DisplayArray(generated);
+                    int[] generated = Lotto6out49.GenerateNumbers();
 
                     Console.WriteLine();
 
-                    newPlayer.Score = CheckRightNumber(numberArray, generated);
+                    Lotto6out49.DisplayArray(generated);
+
+                    Console.WriteLine();
+
+                    newPlayer.Score = Lotto6out49.CheckRightNumber(numberArray, generated);
 
                     Console.WriteLine("You have {0} right rumber(s).", newPlayer.Score);
 
-                    
-
                     Console.WriteLine();
 
-                    CheckIfHighScore(newPlayer, playerList);
-                    
-
-                    
+                    Playerlist.SetIfHighScore(newPlayer, playerList);
+                                        
 
                     Console.WriteLine("If you wanna quit enter q or press w to continue or h to show highscore.");
-
 
 
                     feed = Console.ReadLine();
@@ -243,9 +121,7 @@ namespace Lotto
 
                     if (feed == "h")
                     {
-                        Console.WriteLine("test: " + newPlayer.Score);
-
-                        GetHighscore(playerList);
+                        Playerlist.GetHighscore(playerList);
 
                         break;
                     }
