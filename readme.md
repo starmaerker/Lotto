@@ -1,2 +1,2 @@
 
-Lotto
+Lotto6out49
