@@ -1,2 +1,2 @@
 
-Lotto6out49
+Lotto6out49-test
