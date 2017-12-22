@@ -1,2 +1,2 @@
 
-Lotto6out49-test
+Lotto6out49-testcase
